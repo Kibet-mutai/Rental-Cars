@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.auth import AuthToken
-
+from django.contrib.auth.decorators import login_required
 from .serializers import BookSerializer, Carserializer, SignupSerializer
 
 from .models import Booking, Car
@@ -15,7 +15,7 @@ from .models import Booking, Car
 def Index(request):
     return Response("Welcome!")
 
-
+@login_required(login_url='login')
 @api_view(['GET','POST'])
 def CarView(request):
     if request.method == 'GET':

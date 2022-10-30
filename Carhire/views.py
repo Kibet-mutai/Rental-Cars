@@ -5,9 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.auth import AuthToken
-from django.contrib.auth.decorators import login_required
-from .serializers import BookSerializer, Carserializer, SearchSerializer, SignupSerializer
-from rest_framework import generics
+from .serializers import BookSerializer, Carserializer,SignupSerializer
 from rest_framework import filters
 from django.contrib.auth.models import User
 from .models import Booking, Car
@@ -17,15 +15,15 @@ from django.db.models import Q
 # Create your views here.
 @api_view(['GET'])
 def Index(request):
-    return Response("Welcome!")
+    cars = Car.objects.all()
+    serializer = Carserializer(cars, many=True)
+    return Response(serializer.data)
 
-@login_required(login_url='login')
+
 @api_view(['GET','POST'])
 def CarView(request):
     if request.method == 'GET':
         cars = Car.objects.all()
-        filter_backends = [filters.SearchFilter]
-        search_fields = ['capacity', 'name', 'city', 'model','rates_per_day']
         serializer = Carserializer(cars,many=True)
         return Response(serializer.data)
 

@@ -13,5 +13,7 @@ urlpatterns = [
     path('user', views.get_user_data, name='user'),
     path('register', views.register, name='register'),
     path('logout', knox_views.LogoutView.as_view()),
-    path('logout/all', knox_views.LogoutAllView.as_view())
+    path('logout/all', knox_views.LogoutAllView.as_view()),
+    path('search', views.get_objects),
+    path('car/search', views.get_car),
 ]

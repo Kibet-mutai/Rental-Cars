@@ -6,9 +6,13 @@ from rest_framework.decorators import api_view
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.auth import AuthToken
 from django.contrib.auth.decorators import login_required
-from .serializers import BookSerializer, Carserializer, SignupSerializer
-
+from .serializers import BookSerializer, Carserializer, SearchSerializer, SignupSerializer
+from rest_framework import generics
+from rest_framework import filters
+from django.contrib.auth.models import User
 from .models import Booking, Car
+from .filters import CarFilter
+from django.db.models import Q
 
 # Create your views here.
 @api_view(['GET'])
@@ -20,6 +24,8 @@ def Index(request):
 def CarView(request):
     if request.method == 'GET':
         cars = Car.objects.all()
+        filter_backends = [filters.SearchFilter]
+        search_fields = ['capacity', 'name', 'city', 'model','rates_per_day']
         serializer = Carserializer(cars,many=True)
         return Response(serializer.data)
 
@@ -172,3 +178,29 @@ def register(request):
         'token': token
     })
 
+
+
+
+@api_view(['GET'])
+def get_car(request):
+    params = request.query_params
+    print("Parameters", params)
+    if "names" in params:
+        car_obj = Car.objects.filter(Q(name__icontains=params["name"]) | Q(city__icontains=params["city"]) | Q(capacity__icontains=params["capapcity"]))
+        serializer = Carserializer(car_obj, many=True)
+        return Response(serializer.data)
+    else:
+        cars = Car.objects.all()
+        serializer = Carserializer(cars, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_objects(request):
+    queryset = Car.objects.all()
+    filterset = CarFilter(request.GET, queryset=queryset)
+    if filterset.is_valid():
+        queryset = filterset.qs
+        print('city')
+    serializer = Carserializer(queryset, many=True)
+    return Response(serializer.data)

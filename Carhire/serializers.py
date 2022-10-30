@@ -50,3 +50,10 @@ class SignupSerializer(serializers.ModelSerializer):
             password2 = password2
         )
         return user
+
+
+class SearchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Car
+        fields = '__all__'

@@ -61,7 +61,6 @@ def DetailView(request,id):
 @api_view(['GET','PUT','DELETE'])
 def booking_detail(request,id):
     """"
-
 Retrieve,Update Cancel Hiring cars"""
     try:
         reserve = Booking.objects.get(id=id)
